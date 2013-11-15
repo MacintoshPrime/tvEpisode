@@ -54,17 +54,21 @@ def getSeason(show):
 	
 def getairDate(iso):
     iso = iso['first_aired_iso']
-    date = parser.parse(iso)
-    
-    return date.date()
+    if iso:
+        date = parser.parse(iso)
+        return date.date()
+    else:
+        return None
     
 def iscurrentweek(date):
     
     date = getairDate(date)
+    if not date:
+        return False
     currentweek = datetime.datetime.now().date().isocalendar()[1]
     currentyear = datetime.datetime.now().year
     
-    if date.isocalendar()[1] ==  currentweek and currentyear == date.year:
+    if date.isocalendar()[1] == currentweek and currentyear == date.year:
         return True
     else:
         return False

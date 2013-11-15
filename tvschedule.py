@@ -3,6 +3,20 @@ import json
 import datetime
 from dateutil import parser
 
+def check(show):
+    seasons = "http://api.trakt.tv/show/seasons.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s" %(show)
+    season = urllib2.urlopen(seasons).read()
+    y = json.loads(season)
+    count = len(y)
+    if count == y[0]['season']:
+        episodes = "http://api.trakt.tv/show/season.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s/%s" %(show, count)
+    else:
+        episodes = "http://api.trakt.tv/show/season.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s/%s" %(show, count-1)
+    x = urllib2.urlopen(episodes).read()
+    pretty = json.loads(x)
+
+    return y[0]['season'], len(y)
+    
 def isepisode(show):
     show = show.replace(' ', '-')
     currentseason = getSeason(show)
@@ -11,7 +25,7 @@ def isepisode(show):
     
         for episode in currentseason:
             if iscurrentweek(episode):
-                return episode['overview']
+                return str(episode['first_aired_iso']) + '\n' + episode['title'] + '\n' + episode['overview']
 
     else:
         return "Show not found"
@@ -20,8 +34,15 @@ def isepisode(show):
 def getSeason(show):
     try:
         seasons = "http://api.trakt.tv/show/seasons.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s" %(show)
-        season = len(json.loads(urllib2.urlopen(seasons).read()))
-        episodes = "http://api.trakt.tv/show/season.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s/%s" %(show, season)
+        season = urllib2.urlopen(seasons).read()
+        y = json.loads(season)
+        count = len(y)
+        
+        if count == y[0]['season']:
+            episodes = "http://api.trakt.tv/show/season.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s/%s" %(show, count)
+        else:
+            episodes = "http://api.trakt.tv/show/season.json/78b010f9a0d6e4aae891e8cebbc80fd9/%s/%s" %(show, count-1)
+        
         x = urllib2.urlopen(episodes).read()
     
         pretty = json.loads(x)

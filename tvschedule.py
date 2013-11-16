@@ -25,7 +25,7 @@ def isepisode(show):
     
         for episode in currentseason:
             if iscurrentweek(episode):
-                return str(episode['first_aired_iso']) + '\n' + episode['title'] + '\n' + episode['overview']
+                return str(episode['first_aired_iso']) + '<br />' + episode['title'] + '<br />' + episode['overview']
 
     else:
         return "Show not found"
